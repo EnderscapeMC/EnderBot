@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const connection = require ('../../database');
+const connection = require('../../database');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -18,10 +18,9 @@ module.exports = {
         const user = interaction.options.getUser('user');
         const member = interaction.member;
         console.log(`${interaction.user.tag} added ${amount} XP to ${user.tag}.`);
-
         connection.query(
-            'INSERT INTO users (id, xp, level, username, discriminator, avatar) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
-            [user.id, amount, 1, user.username, user.discriminator, user.avatar, amount],
+            'INSERT INTO users (id, xp, level, username, discriminator, avatar) VALUES (?, ?, 1, ?, ?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
+            [user.id, amount, user.username, user.discriminator, user.avatar, amount],
             (err, result) => {
                 if (err) throw err;
                 connection.query(
