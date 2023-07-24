@@ -3,6 +3,17 @@ const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 const connection = require('./database');
+const { exec } = require('child_process');
+const path = require('path');
+
+exec(path.join(__dirname,'start.sh'), (error, stdout, stderr) => {
+	if (error) {
+		console.error(`exec error: ${error}`);
+		return;
+	}
+	console.log(`stdout: ${stdout}`);
+	console.error(`stderr: ${stderr}`);
+});
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
