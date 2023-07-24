@@ -17,36 +17,40 @@ module.exports = {
         const amount = interaction.options.getInteger('amount');
         const user = interaction.options.getUser('user');
         const member = interaction.member;
-        console.log(`${interaction.user.tag} added ${amount} XP to ${user.tag}.`);
-        connection.query(
-            'INSERT INTO users (id, xp, level, username, discriminator, avatar) VALUES (?, ?, 1, ?, ?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
-            [user.id, amount, user.username, user.discriminator, user.avatar, amount],
-            (err, result) => {
-                if (err) throw err;
-                connection.query(
-                    'SELECT xp, level FROM users WHERE id = ?',
-                    [user.id],
-                    (err, result) => {
-                        if (err) throw err;
-                        const newXP = result[0].xp;
-                        const currentLevel = result[0].level;
-                        const levelUpThreshold = 300;
-                        const newLevel = Math.floor(newXP / levelUpThreshold) + 1;
-                        if (newLevel > currentLevel) {
-                            connection.query(
-                                'UPDATE users SET level = ? WHERE id = ?',
-                                [newLevel, user.id],
-                                (err, result) => {
-                                    if (err) throw err;
-                                    interaction.reply(`${amount} XP added to ${user}!\n${user} has levelled up to level ${newLevel}!\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
-                                }
-                            );
-                        } else {
-                            interaction.reply(`${amount} XP added to ${user}!\nCurrent Level: ${currentLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+        if (!member.roles.cache.some(role => role.name === 'Moderator')) {
+            return await interaction.reply('You do not have permission to use this command.');
+        } else {
+            console.log(`${interaction.user.tag} added ${amount} XP to ${user.tag}.`);
+            connection.query(
+                'INSERT INTO users (id, xp, level, username, discriminator, avatar) VALUES (?, ?, 1, ?, ?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
+                [user.id, amount, user.username, user.discriminator, user.avatar, amount],
+                (err, result) => {
+                    if (err) throw err;
+                    connection.query(
+                        'SELECT xp, level FROM users WHERE id = ?',
+                        [user.id],
+                        (err, result) => {
+                            if (err) throw err;
+                            const newXP = result[0].xp;
+                            const currentLevel = result[0].level;
+                            const levelUpThreshold = 300;
+                            const newLevel = Math.floor(newXP / levelUpThreshold) + 1;
+                            if (newLevel > currentLevel) {
+                                connection.query(
+                                    'UPDATE users SET level = ? WHERE id = ?',
+                                    [newLevel, user.id],
+                                    (err, result) => {
+                                        if (err) throw err;
+                                        interaction.reply(`${amount} XP added to ${user}!\n${user} has levelled up to level ${newLevel}!\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                    }
+                                );
+                            } else {
+                                interaction.reply(`${amount} XP added to ${user}!\nCurrent Level: ${currentLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                            }
                         }
-                    }
-                );
-            }
-        );
+                    );
+                }
+            );
+        }
     },
 };
