@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const connection = require ('../../database');
+const connection = require('../../database');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -41,7 +41,11 @@ module.exports = {
                                 [newLevel, user.id],
                                 (err, result) => {
                                     if (err) throw err;
-                                    interaction.reply(`${amount} XP removed from ${user}!\nCurrent Level: ${newLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                    if (newLevel < currentLevel) {
+                                        interaction.reply(`${amount} XP removed from ${user}!\nLevelled down from Level ${currentLevel} to Level ${newLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                    } else {
+                                        interaction.reply(`${amount} XP removed from ${user}!\nCurrent Level: ${newLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                    }
                                 }
                             );
                         } else {
