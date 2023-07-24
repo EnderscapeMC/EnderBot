@@ -16,7 +16,7 @@ module.exports = {
     async execute(interaction) {
         const amount = interaction.options.getInteger('amount');
         const user = interaction.options.getUser('user');
-        connection.execute(
+        connection.query(
             'INSERT INTO user (id, xp) VALUES (?, ?) ON DUPLICATE KEY UPDATE    xp = xp + ?',
             [user, amount, amount],
             (err, result) => {
