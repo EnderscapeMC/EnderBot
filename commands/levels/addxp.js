@@ -18,7 +18,7 @@ module.exports = {
         const user = interaction.options.getUser('user');
         console.log(amount, user);
         connection.query(
-            'INSERT INTO users (id, xp) VALUES (?, ?) ON DUPLICATE KEY UPDATE    xp = xp + ?',
+            'INSERT INTO users (id, xp) VALUES (?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
             [user, amount, amount],
             (err, result) => {
                 if (err) throw err;
