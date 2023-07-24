@@ -38,7 +38,7 @@ module.exports = {
                                 [newLevel, user.id],
                                 (err, result) => {
                                     if (err) throw err;
-                                    interaction.reply(`${user} has levelled up to level ${newLevel}!\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                    interaction.reply(`${amount} XP added to ${user}!\n${user} has levelled up to level ${newLevel}!\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
                                 }
                             );
                         } else {
