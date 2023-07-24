@@ -16,7 +16,7 @@ module.exports = {
     async execute(interaction) {
         const amount = interaction.options.getInteger('amount');
         const user = interaction.options.getUser('user');
-        const member = interaction.guild.members.cache.get(user.id);
+        const member = interaction.member;
         console.log(`${member.displayName} added ${amount} XP to ${user.username}.`);
         connection.query(
             'INSERT INTO users (id, xp, username, discriminator, avatar) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
