@@ -49,14 +49,6 @@ for (const file of eventFiles) {
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}`);
-	connection.connect((err) => {
-	  if (err) {
-		console.error('Database connection error:', err);
-	  } else {
-		console.log('Connected to MySQL database.');
-	  }
-	  connection.end();
-	});
   });
 
 client.login(token);
