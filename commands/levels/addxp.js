@@ -19,11 +19,11 @@ module.exports = {
         console.log(amount, user);
         connection.query(
             'INSERT INTO users (id, xp) VALUES (?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
-            [user, amount, amount],
+            [user.id, amount, amount],
             (err, result) => {
                 if (err) throw err;
-                interaction.reply('${amount}XP added to ${user}!')
+                interaction.reply(`${amount} XP added to ${user}!`);
             }
         );
-    },
+    },          
 };
