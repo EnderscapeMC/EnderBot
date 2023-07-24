@@ -55,6 +55,7 @@ client.on('ready', () => {
 	  } else {
 		console.log('Connected to MySQL database.');
 	  }
+	  connection.end();
 	});
   });
 
