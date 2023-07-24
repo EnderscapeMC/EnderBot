@@ -1,2 +1,2 @@
 #!/bin/bash
-npm deploy-commands.js
+node deploy-commands.js
