@@ -16,7 +16,8 @@ module.exports = {
     async execute(interaction) {
         const amount = interaction.options.getInteger('amount');
         const user = interaction.options.getUser('user');
-        console.log(amount, user);
+        const member = interaction.member;
+        console.log(member, ' added ', amount, ' XP to ', user, '.');
         connection.query(
             'INSERT INTO users (id, xp, username, discriminator, avatar) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
             [user.id, amount, user.username, user.discriminator, user.avatar, amount],
