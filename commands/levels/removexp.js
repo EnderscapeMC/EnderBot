@@ -18,16 +18,15 @@ module.exports = {
         const user = interaction.options.getUser('user');
         const member = interaction.member;
         console.log(`${interaction.user.tag} removed ${amount} XP from ${user.tag}.`);
-        connection.query('SELECT xp FROM users WHERE id = ?', [user.id], (err, rows) => {
+        connection.query('SELECT xp, level FROM users WHERE id = ?', [user.id], (err, rows) => {
             if (err) throw err;
-
             if (rows.length === 0) {
                 interaction.reply(`${user} not found in the database.`);
                 return;
             }
-
             const currentXP = rows[0].xp;
-        
+            const currentLevel = rows[0].level;
+            const levelUpThreshold = 300;
             if (currentXP >= amount) {
                 connection.query(
                     'UPDATE users SET xp = GREATEST(xp - ?, 0) WHERE id = ?',
@@ -35,7 +34,16 @@ module.exports = {
                     (err, result) => {
                         if (err) throw err;
                         if (result.affectedRows > 0) {
-                            interaction.reply(`${amount} XP removed from ${user}!`);
+                            const newXP = currentXP - amount;
+                            const newLevel = Math.floor(newXP / levelUpThreshold) + 1;
+                            connection.query(
+                                'UPDATE users SET level = ? WHERE id = ?',
+                                [newLevel, user.id],
+                                (err, result) => {
+                                    if (err) throw err;
+                                    interaction.reply(`${amount} XP removed from ${user}!\nCurrent Level: ${newLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                }
+                            );
                         } else {
                             interaction.reply(`Failed to remove XP from ${user}.`);
                         }
@@ -45,5 +53,5 @@ module.exports = {
                 interaction.reply(`${user} does not have enough XP to remove.`);
             }
         });
-    },          
+    },
 };
