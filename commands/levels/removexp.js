@@ -17,7 +17,7 @@ module.exports = {
         const amount = interaction.options.getInteger('amount');
         const user = interaction.options.getUser('user');
         const member = interaction.member;
-        console.log(`${interaction.user.tag} removed ${amount} XP from ${user.username}.`);
+        console.log(`${interaction.user.tag} removed ${amount} XP from ${user.tag}.`);
         connection.query(
             'UPDATE users SET xp = GREATEST(xp - ?, 0) WHERE id = ?',
             [amount, user.id],
