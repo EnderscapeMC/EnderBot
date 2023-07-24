@@ -3,50 +3,60 @@ const connection = require('../../database');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('addxp')
-        .setDescription('Add XP to a user.')
+        .setName('removexp')
+        .setDescription('Remove XP from a user.')
         .addIntegerOption(option =>
             option.setName('amount')
-                .setDescription('The amount of XP to add.')
+                .setDescription('The amount of XP to remove.')
                 .setRequired(true))
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('The user to add XP to.')
+                .setDescription('The user to remove XP from.')
                 .setRequired(true)),
     async execute(interaction) {
         const amount = interaction.options.getInteger('amount');
         const user = interaction.options.getUser('user');
         const member = interaction.member;
-        console.log(`${interaction.user.tag} added ${amount} XP to ${user.tag}.`);
-        connection.query(
-            'INSERT INTO users (id, xp, level, username, discriminator, avatar) VALUES (?, ?, 1, ?, ?, ?) ON DUPLICATE KEY UPDATE xp = xp + ?',
-            [user.id, amount, user.username, user.discriminator, user.avatar, amount],
-            (err, result) => {
-                if (err) throw err;
+        console.log(`${interaction.user.tag} removed ${amount} XP from ${user.tag}.`);
+        connection.query('SELECT xp, level FROM users WHERE id = ?', [user.id], (err, rows) => {
+            if (err) throw err;
+            if (rows.length === 0) {
+                interaction.reply(`${user} not found in the database.`);
+                return;
+            }
+            const currentXP = rows[0].xp;
+            const currentLevel = rows[0].level;
+            const levelUpThreshold = 300;
+            if (currentXP >= amount) {
                 connection.query(
-                    'SELECT xp, level FROM users WHERE id = ?',
-                    [user.id],
+                    'UPDATE users SET xp = GREATEST(xp - ?, 0) WHERE id = ?',
+                    [amount, user.id],
                     (err, result) => {
                         if (err) throw err;
-                        const newXP = result[0].xp;
-                        const currentLevel = result[0].level;
-                        const levelUpThreshold = 300;
-                        const newLevel = Math.floor(newXP / levelUpThreshold) + 1;
-                        if (newLevel > currentLevel) {
+                        if (result.affectedRows > 0) {
+                            const newXP = currentXP - amount;
+                            const newLevel = Math.floor(newXP / levelUpThreshold) + 1;
                             connection.query(
                                 'UPDATE users SET level = ? WHERE id = ?',
                                 [newLevel, user.id],
                                 (err, result) => {
                                     if (err) throw err;
-                                    interaction.reply(`${user} has levelled up to level ${newLevel}!\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                    if (newLevel < currentLevel) {
+                                        interaction.reply(`${amount} XP removed from ${user}!\nLevelled down from Level ${currentLevel} to Level ${newLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                    } else {
+                                        interaction.reply(`${amount} XP removed from ${user}!\nCurrent Level: ${newLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                                    }
                                 }
                             );
                         } else {
-                            interaction.reply(`${amount} XP added to ${user}!\nCurrent Level: ${currentLevel}\nRemaining XP for Next Level: ${levelUpThreshold - (newXP % levelUpThreshold)}`);
+                            interaction.reply(`Failed to remove XP from ${user}.`);
                         }
                     }
                 );
+            } else {
+                interaction.reply(`${user} does not have enough XP to remove.`);
             }
-        );
+        });
     },
 };
+
