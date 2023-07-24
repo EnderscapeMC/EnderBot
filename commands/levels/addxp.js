@@ -31,7 +31,7 @@ module.exports = {
                         const newXP = result[0].xp;
                         const currentLevel = result[0].level;
                         const levelUpThreshold = 300;
-                        const newLevel = Math.floor(newXP / levelUpThreshold);
+                        const newLevel = Math.floor(newXP / levelUpThreshold) + 1;
                         if (newLevel > currentLevel) {
                             connection.query(
                                 'UPDATE users SET level = ? WHERE id = ?',
