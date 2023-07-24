@@ -18,17 +18,32 @@ module.exports = {
         const user = interaction.options.getUser('user');
         const member = interaction.member;
         console.log(`${interaction.user.tag} removed ${amount} XP from ${user.tag}.`);
-        connection.query(
-            'UPDATE users SET xp = GREATEST(xp - ?, 0) WHERE id = ?',
-            [amount, user.id],
-            (err, result) => {
-                if (err) throw err;
-                if (result.affectedRows > 0) {
-                    interaction.reply(`${amount} XP removed from ${user}!`);
-                } else {
-                    interaction.reply(`${user} does not have enough XP to remove.`);
-                }
+        connection.query('SELECT xp FROM users WHERE id = ?', [user.id], (err, rows) => {
+            if (err) throw err;
+
+            if (rows.length === 0) {
+                interaction.reply(`${user} not found in the database.`);
+                return;
             }
-        );
+
+            const currentXP = rows[0].xp;
+        
+            if (currentXP >= amount) {
+                connection.query(
+                    'UPDATE users SET xp = GREATEST(xp - ?, 0) WHERE id = ?',
+                    [amount, user.id],
+                    (err, result) => {
+                        if (err) throw err;
+                        if (result.affectedRows > 0) {
+                            interaction.reply(`${amount} XP removed from ${user}!`);
+                        } else {
+                            interaction.reply(`Failed to remove XP from ${user}.`);
+                        }
+                    }
+                );
+            } else {
+                interaction.reply(`${user} does not have enough XP to remove.`);
+            }
+        });
     },          
 };
