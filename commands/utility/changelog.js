@@ -13,10 +13,10 @@ module.exports = {
         else {
             const changelogEmbed = new EmbedBuilder()
                 .setColor('#813eff')
-                .setTitle('ㅤㅤㅤㅤㅤㅤㅤㅤ__Enderscape Changelog 20/7/23__')
+                .setTitle('ㅤㅤㅤㅤㅤㅤㅤㅤ__Enderscape Changelog 25/7/23__')
                 .addFields(
-                    { name: '\u200B', value: '➤ **Miscellaneous:**\n• Nations levels added to `/levelperks` - can now also use `/levels` to open this menu. Nations items do not currently update.\n• `/rankperks` menu items now change depending on player rank.', inline: false },
-                    { name: '\u200B', value: '➤ **Bug Fixes:**\n• Fixed issue whereby players had insufficient permissions to upgrade Upgradeable Hoppers.\n• Fixed butcher drops for Blaze spawners, as reported by <@529311057437655050>.', inline: false },
+                    { name: '\u200B', value: '➤ **Banner Creation GUI:**\n• Banner Maker GUI implemented - use `/bm` to open this. Currently a Netherite-only feature.\n• Users in Creative can get created banners without needing materials.\n• Use `/bm see` and `/bm hand` to get information on a banner you are looking at or holding, respectively.', inline: false },
+                    { name: '\u200B', value: '➤ **Miscellaneous:**\n• AutoShulkers and DispoShulkers re-enabled.\n• `/report` command functions once again.\n• Camels, Mules, Villagers, Skeleton Horses, Wandering Traders, Striders and Iron Golems can now be locked with `/cp lock`. \n• Nations tax limit increased from `$10` per Land member chunk to `$20` per Land member chunk to allow Nations to break even with Nations upkeep (capital land does not pay taxes to Nation).', inline: false },
                 ); 
             
             interaction.channel.send({ embeds: [changelogEmbed] });
