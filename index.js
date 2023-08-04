@@ -1,10 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
-const { client } = require('./config');
-const connection = require('./database.js');
+const { token } = require('./config.json');
+const connection = require('./database');
 const { exec } = require('child_process');
-const botToken = client.token; 
 
 exec(path.join(__dirname,'start.sh'), (error, stdout, stderr) => {
 	if (error) {
@@ -15,7 +14,7 @@ exec(path.join(__dirname,'start.sh'), (error, stdout, stderr) => {
 	console.error(`stderr: ${stderr}`);
 });
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
