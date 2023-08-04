@@ -1,8 +1,8 @@
 const connection = require('../database.js');
 const { time, wait } = require('aqify.js');
 const colors = require('colors');
-const config = require("./config.js");
-const projectVersion = require('./package.json').version || "v0.0.0";
+const config = require("../config.js");
+const projectVersion = require('../package.json').version || "v0.0.0";
 
 const {
     Client,
