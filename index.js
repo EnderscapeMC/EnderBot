@@ -1,9 +1,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
-const { token } = require('./config.js');
+const { client } = require('./config');
 const connection = require('./database.js');
 const { exec } = require('child_process');
+const botToken = client.token; 
 
 exec(path.join(__dirname,'start.sh'), (error, stdout, stderr) => {
 	if (error) {
