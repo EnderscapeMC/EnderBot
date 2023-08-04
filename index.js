@@ -14,7 +14,7 @@ exec(path.join(__dirname,'start.sh'), (error, stdout, stderr) => {
 	console.error(`stderr: ${stderr}`);
 });
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
@@ -46,9 +46,5 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
-
-client.on('ready', () => {
-	console.log(`Logged in as ${client.user.tag}`);
-  });
 
 client.login(token);
